@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"regexp"
-
 	"bufio"
+	"fmt"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -61,18 +61,14 @@ func main() {
 }
 
 func tokens(line string) {
-	// a = point(2, 3);
 
-	// do id last bc i feel like it,
-
-	// change tokenizing to take care of errors
-
-	// ask about diff between lexeme and syntax error
-
-	// Tokenizes ID
 	re := regexp.MustCompile(`^[a-z]+[a-z0-9]*`)
 	id := re.FindString(line)
-	fmt.Println(id)
+	if id == "test" {
+		fmt.Println("TEST")
+	} else {
+		fmt.Println("ID", id)
+	}
 
 	// Tokenizes =
 	if strings.Contains(line, "=") {
@@ -92,11 +88,12 @@ func tokens(line string) {
 	// Tokenizes x value
 	x := regexp.MustCompile(`(\d+)`)
 	xVal := x.FindString(line)
-	fmt.Println(xVal)
+	if _, err := strconv.Atoi(xVal); err == nil {
+		fmt.Println("NUM ", xVal)
 
-	// Tokenizes ,
-	if strings.Contains(line, ",") {
-		fmt.Println("COMMA")
+		if strings.Contains(line, ",") {
+			fmt.Println("COMMA")
+		}
 	}
 
 	// Tokenizes y value
@@ -104,16 +101,40 @@ func tokens(line string) {
 	// ySeen := y.FindStringSubmatch(line)
 	// if len(ySeen) > 1 {
 	// 	fmt.Println("NUM", ySeen[1])
-
 	// }
 
 	y := regexp.MustCompile(`(,\s*\d+)`)
 	yComma := y.FindString(line)
 	y2 := regexp.MustCompile(`\d+`)
 	yVal := y2.FindString(yComma)
-	fmt.Println(yVal)
+	if _, err := strconv.Atoi(yVal); err == nil {
+		fmt.Println("NUM ", yVal)
+	}
 
-	//fmt.Println(created)
+	// Tokenizes triangle
+	if strings.Contains(line, "triangle") {
+		fmt.Println("TRIANGLE")
+	}
+
+	/**
+	tri := regexp.MustCompile(`,\s*[a-z0-9]+`)
+	tri1Comma := tri.FindString(line)
+	tri1 := regexp.MustCompile(`[a-z0-9]+`)
+	tri1Val := tri1.FindString(tri1Comma)
+	if id == "test" {
+		ID:
+	}
+	**/
+
+	// Tokenizes square
+	if strings.Contains(line, "square") {
+		fmt.Println("SQUARE")
+	}
+
+	// Tokenizes ,
+	if strings.Contains(line, ",") {
+		fmt.Println("COMMA")
+	}
 
 	// Tokenizes )
 	if strings.Contains(line, ")") {
@@ -125,4 +146,8 @@ func tokens(line string) {
 		fmt.Println("SEMICOLON")
 	}
 
+	// Tokenizes .
+	if strings.Contains(line, ".") {
+		fmt.Println("PERIOD")
+	}
 }
