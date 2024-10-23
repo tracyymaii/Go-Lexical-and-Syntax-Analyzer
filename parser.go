@@ -125,6 +125,30 @@ func tokens(line string) {
 		ID:
 	}
 	**/
+	/*
+	triangle, find biggerm if triangle, then print, nad repeat
+	t is the id, an will print out as id, but will save as t1, t2, t3 = ids and then the ids have values assigne to it
+	do matchString to get a list of it values after comma, then preset each to null, so its jsut re-assigned in statement, then can be used outside of function
+	*/
+
+	tri := regexp.MustCompile(`(,\s*\d+)`)
+	triVars := tri.FindAllStringSubmatch(line, -1)
+
+	tri1 := os.DevNull
+	tri2 := os.DevNull
+	tri3 := os.DevNull
+
+	if len(triVars) > 0 && 
+
+
+	
+		tri1 = match[1]
+		fmt.Println("ID", tri1)
+		tri2 = match[2]
+		fmt.Print
+	
+
+
 
 	// Tokenizes square
 	if strings.Contains(line, "square") {
