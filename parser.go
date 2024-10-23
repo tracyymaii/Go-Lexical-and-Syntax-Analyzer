@@ -1,12 +1,7 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
 	"os"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
 // type point struct {
@@ -14,6 +9,52 @@ import (
 // 	xValue   string
 // 	yValue   string
 // }
+
+type tokenType string
+
+const (
+	POINT     tokenType = "POINT"
+	ID        tokenType = "ID"
+	NUM       tokenType = "NUM"
+	SEMICOLON tokenType = "SEMICOLON"
+	COMMA     tokenType = "COMMA"
+	PERIOD    tokenType = "PERIOD"
+	LPAREN    tokenType = "LPAREN"
+	RPAREN    tokenType = "RPAREN"
+	ASSIGN    tokenType = "ASSIGN"
+	TRIANGLE  tokenType = "TRIANGLE"
+	SQUARE    tokenType = "SQUARE"
+	TEST      tokenType = "TEST"
+)
+
+type Token struct {
+	Type  tokenType
+	Value string
+}
+
+/*
+a = point ( 2 , 3 ) ;
+b = point ( 1 , 1 ) ;
+c = point ( 1 , 3 ) ;
+d = point ( 2 , 1 ) ;
+test ( triangle , a , b , c ) ;
+test ( square , a, b , c , d ) .
+*/
+
+var tokenRegex = map[tokenType]string{
+	POINT:     `^point\b`,
+	ID:        `^[a-z]+[a-z0-9]*`,
+	NUM:       `\d+`,
+	SEMICOLON: `;`,
+	COMMA:     `,`,
+	PERIOD:    `\.`,
+	LPAREN:    `\(`,
+	RPAREN:    `\)`,
+	ASSIGN:    `=`,
+	TRIANGLE:  `triangle\b`,
+	SQUARE:    `square\b`,
+	TEST:      `test\b`,
+}
 
 func main() {
 
@@ -44,134 +85,29 @@ func main() {
 		fmt.Scan(&fileName)
 		fmt.Scan(&schemeOrProlog)
 	**/
-	file, err := os.Open("test1.cpl")
+	file, err := os.ReadFile("test1.cpl")
 	if err != nil {
 		panic(err)
 	}
 
-	scanner := bufio.NewScanner(file)
+	textFile := string(file)
+	tokens(textFile)
 
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		tokens(line)
-	}
-
-	defer file.Close()
 }
 
-func tokens(line string) {
-
-	re := regexp.MustCompile(`^[a-z]+[a-z0-9]*`)
-	id := re.FindString(line)
-	if id == "test" {
-		fmt.Println("TEST")
-	} else {
-		fmt.Println("ID", id)
-	}
-
-	// Tokenizes =
-	if strings.Contains(line, "=") {
-		fmt.Println("ASSIGN")
-	}
-
-	// Tokenizes ,
-	if strings.Contains(line, "point") {
-		fmt.Println("POINT")
-	}
-
-	// Tokenizes (
-	if strings.Contains(line, "(") {
-		fmt.Println("LPAREN")
-	}
-
-	// Tokenizes x value
-	x := regexp.MustCompile(`(\d+)`)
-	xVal := x.FindString(line)
-	if _, err := strconv.Atoi(xVal); err == nil {
-		fmt.Println("NUM ", xVal)
-
-		if strings.Contains(line, ",") {
-			fmt.Println("COMMA")
-		}
-	}
-
-	// Tokenizes y value
-	// y := regexp.MustCompile(`\,(.*?)\)`)
-	// ySeen := y.FindStringSubmatch(line)
-	// if len(ySeen) > 1 {
-	// 	fmt.Println("NUM", ySeen[1])
-	// }
-
-	y := regexp.MustCompile(`(,\s*\d+)`)
-	yComma := y.FindString(line)
-	y2 := regexp.MustCompile(`\d+`)
-	yVal := y2.FindString(yComma)
-	if _, err := strconv.Atoi(yVal); err == nil {
-		fmt.Println("NUM ", yVal)
-	}
-
-	// Tokenizes triangle
-	if strings.Contains(line, "triangle") {
-		fmt.Println("TRIANGLE")
-	}
-
-	/**
-	tri := regexp.MustCompile(`,\s*[a-z0-9]+`)
-	tri1Comma := tri.FindString(line)
-	tri1 := regexp.MustCompile(`[a-z0-9]+`)
-	tri1Val := tri1.FindString(tri1Comma)
-	if id == "test" {
-		ID:
-	}
-	**/
+func tokens(textFile string) {
 	/*
-	triangle, find biggerm if triangle, then print, nad repeat
-	t is the id, an will print out as id, but will save as t1, t2, t3 = ids and then the ids have values assigne to it
-	do matchString to get a list of it values after comma, then preset each to null, so its jsut re-assigned in statement, then can be used outside of function
+		you have 2 structs, tokenType string --> used more for printing so then youcan njsut say the var and it will print
+		token regex, --> searches for pattern
+
+
+		through file , if pattern is in tokenrege, print out tokentype,
+							if token = id or num, needs to be saved
+
+
+
+
 	*/
 
-	tri := regexp.MustCompile(`(,\s*\d+)`)
-	triVars := tri.FindAllStringSubmatch(line, -1)
-
-	tri1 := os.DevNull
-	tri2 := os.DevNull
-	tri3 := os.DevNull
-
-	if len(triVars) > 0 && 
-
-
-	
-		tri1 = match[1]
-		fmt.Println("ID", tri1)
-		tri2 = match[2]
-		fmt.Print
-	
-
-
-
-	// Tokenizes square
-	if strings.Contains(line, "square") {
-		fmt.Println("SQUARE")
-	}
-
-	// Tokenizes ,
-	if strings.Contains(line, ",") {
-		fmt.Println("COMMA")
-	}
-
-	// Tokenizes )
-	if strings.Contains(line, ")") {
-		fmt.Println("RPAREN")
-	}
-
-	// Tokenizes ;
-	if strings.Contains(line, ";") {
-		fmt.Println("SEMICOLON")
-	}
-
-	// Tokenizes .
-	if strings.Contains(line, ".") {
-		fmt.Println("PERIOD")
-	}
+	print(textFile)
 }
