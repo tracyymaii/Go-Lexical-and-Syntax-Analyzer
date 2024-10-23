@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"regexp"
+	"strings"
 )
 
 // type point struct {
@@ -91,11 +94,12 @@ func main() {
 	}
 
 	textFile := string(file)
-	tokens(textFile)
+	tokenizer(textFile)
 
+	
 }
 
-func tokens(textFile string) {
+func tokenizer(textFile string) {
 	/*
 		you have 2 structs, tokenType string --> used more for printing so then youcan njsut say the var and it will print
 		token regex, --> searches for pattern
@@ -103,11 +107,37 @@ func tokens(textFile string) {
 
 		through file , if pattern is in tokenrege, print out tokentype,
 							if token = id or num, needs to be saved
-
-
-
-
 	*/
 
+	// i for rune without explicity doing it
+	// char = string
+	
+	// tokens := strings.Fields(textFile)
+
+	// for _, tokens := range textFile {
+
+	// 	if tokens, 
+
+
+		
+		for textFile {
+			
+		}
+
+	 	for type, pattern := range tokenRegex {
+	 		re : regexp.MustCompile(pattern)
+
+		}
+
+	// 		if re.MatchString(tokens) {
+	// 			fmt.Print(type)
+	// 		}
+	// 	}
+	// }
+
+	//re := regexp.MustCompile(tokenRegex) 	
+
+
 	print(textFile)
+
 }
