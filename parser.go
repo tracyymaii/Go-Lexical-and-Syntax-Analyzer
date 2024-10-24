@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
+	
+	"bufio"
+	
+	//"strings"
 )
 
 // type point struct {
@@ -12,6 +15,8 @@ import (
 // 	xValue   string
 // 	yValue   string
 // }
+
+
 
 type tokenType string
 
@@ -59,6 +64,8 @@ var tokenRegex = map[tokenType]string{
 	TEST:      `test\b`,
 }
 
+
+
 func main() {
 
 	/*
@@ -88,18 +95,28 @@ func main() {
 		fmt.Scan(&fileName)
 		fmt.Scan(&schemeOrProlog)
 	**/
-	file, err := os.ReadFile("test1.cpl")
+	file, err := os.Open("test1.cpl")
 	if err != nil {
 		panic(err)
 	}
 
-	textFile := string(file)
-	tokenizer(textFile)
+	
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+    	line := scanner.Text() // 'line' is of type string
+    	tokenizer(line)    // Prints the line as a string
+	}
+ 
+		// append it if return a value
+
+	// textFile := string(file)
+	// tokenizer(textFile)
 
 	
 }
 
-func tokenizer(textFile string) {
+func tokenizer(line string) {
 	/*
 		you have 2 structs, tokenType string --> used more for printing so then youcan njsut say the var and it will print
 		token regex, --> searches for pattern
@@ -109,35 +126,30 @@ func tokenizer(textFile string) {
 							if token = id or num, needs to be saved
 	*/
 
-	// i for rune without explicity doing it
-	// char = string
+	// compiles entire map of pattern off the bat
+	compiledPattern := make(map[tokenType]*regexp.Regexp)
+	for key, pattern := range tokenRegex {
+		compiledPattern[key] = regexp.MustCompile(pattern)		
+	}
+
+	matches := compiledPattern.FindAllString(line, -1)
+	if len(matches) > 0 {
+		fmt.Println(matches)
+	}
+
 	
-	// tokens := strings.Fields(textFile)
+	
 
-	// for _, tokens := range textFile {
-
-	// 	if tokens, 
-
-
-		
-		for textFile {
-			
+/*
+	for key, reg := range compiledPattern {
+		if reg.MatchString(line) {
+			fmt.Println(key)
 		}
-
-	 	for type, pattern := range tokenRegex {
-	 		re : regexp.MustCompile(pattern)
-
-		}
-
-	// 		if re.MatchString(tokens) {
-	// 			fmt.Print(type)
-	// 		}
-	// 	}
-	// }
-
-	//re := regexp.MustCompile(tokenRegex) 	
+	}
+*/
+	
 
 
-	print(textFile)
+
 
 }
