@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	
-	"bufio"
-	
-	//"strings"
+	"strings"
+
+	"github.com/elliotchance/orderedmap/v2"
 )
 
 // type point struct {
@@ -15,56 +14,6 @@ import (
 // 	xValue   string
 // 	yValue   string
 // }
-
-
-
-type tokenType string
-
-const (
-	POINT     tokenType = "POINT"
-	ID        tokenType = "ID"
-	NUM       tokenType = "NUM"
-	SEMICOLON tokenType = "SEMICOLON"
-	COMMA     tokenType = "COMMA"
-	PERIOD    tokenType = "PERIOD"
-	LPAREN    tokenType = "LPAREN"
-	RPAREN    tokenType = "RPAREN"
-	ASSIGN    tokenType = "ASSIGN"
-	TRIANGLE  tokenType = "TRIANGLE"
-	SQUARE    tokenType = "SQUARE"
-	TEST      tokenType = "TEST"
-)
-
-type Token struct {
-	Type  tokenType
-	Value string
-}
-
-/*
-a = point ( 2 , 3 ) ;
-b = point ( 1 , 1 ) ;
-c = point ( 1 , 3 ) ;
-d = point ( 2 , 1 ) ;
-test ( triangle , a , b , c ) ;
-test ( square , a, b , c , d ) .
-*/
-
-var tokenRegex = map[tokenType]string{
-	POINT:     `^point\b`,
-	ID:        `^[a-z]+[a-z0-9]*`,
-	NUM:       `\d+`,
-	SEMICOLON: `;`,
-	COMMA:     `,`,
-	PERIOD:    `\.`,
-	LPAREN:    `\(`,
-	RPAREN:    `\)`,
-	ASSIGN:    `=`,
-	TRIANGLE:  `triangle\b`,
-	SQUARE:    `square\b`,
-	TEST:      `test\b`,
-}
-
-
 
 func main() {
 
@@ -95,61 +44,230 @@ func main() {
 		fmt.Scan(&fileName)
 		fmt.Scan(&schemeOrProlog)
 	**/
-	file, err := os.Open("test1.cpl")
+
+	orderedMap := orderedmap.NewOrderedMap[string, string]()
+
+	orderedMap.Set("ID", `^[a-z]+[a-z0-9]*`)
+	orderedMap.Set("ASSIGN", `=`)
+	orderedMap.Set("POINT", `point`)
+	orderedMap.Set("LPAREN", `\(`)
+	orderedMap.Set("NUM", `[0-9]`)
+	orderedMap.Set("RPAREN", `\)`)
+	orderedMap.Set("SEMICOLON", `;`)
+	orderedMap.Set("PERIOD", `\.`)
+
+	compiledPattern := orderedmap.NewOrderedMap[string, *regexp.Regexp]()
+
+	yuh := orderedmap.NewOrderedMap[int, int]()
+	yuh.Set(7, 2)
+	yuh.Set(3, 4)
+	yuh.Set(5, 6)
+	yuh.Set(1, 8)
+
+	/*
+		re := regexp.MustCompile(`^[a-z]+[a-z0-9]*`)
+			id := re.FindString(line)
+			if id == "test" {
+				fmt.Println("TEST")
+			} else {
+				fmt.Println("ID", id)
+			}
+	*/
+
+	for element := orderedMap.Front(); element != nil; element = element.Next() {
+		compiledPattern.Set(element.Key, regexp.MustCompile(element.Value))
+	}
+
+	/*
+		for item := compiledPattern.Front(); item != nil; item = item.Next() {
+			fmt.Println(item.Key, item.Value)
+			fmt.Printf("Type of 'item.Value': %T\n", item.Value)
+		}
+	*/
+
+	file, err := os.ReadFile("test1.cpl")
 	if err != nil {
 		panic(err)
 	}
 
-	
+	//var fileBuild strings.Builder
+	// scanner := bufio.NewScanner(file)
+	// for scanner.Scan() {
+	// 	line := scanner.Text()
+	// }
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-    	line := scanner.Text() // 'line' is of type string
-    	tokenizer(line)    // Prints the line as a string
-	}
- 
-		// append it if return a value
+	//entireFile := fileBuild.String()
+	entireFile := string(file)
 
-	// textFile := string(file)
-	// tokenizer(textFile)
+	tokens(entireFile)
 
-	
+	//defer file.Close()
 }
 
-func tokenizer(line string) {
+func tokens(entireFile string) {
+
+	print(entireFile)
+
+	trimmedFile := strings.TrimSpace(entireFile)
+
+	orderedMap := orderedmap.NewOrderedMap[string, string]()
+
+	orderedMap.Set("ID", `^[a-z]+[a-z0-9]*`)
+	orderedMap.Set("ASSIGN", `=`)
+	orderedMap.Set("POINT", `point`)
+	orderedMap.Set("LPAREN", `\(`)
+	orderedMap.Set("NUM", `[0-9]`)
+	orderedMap.Set("COMMA", `,`)
+	orderedMap.Set("RPAREN", `\)`)
+	orderedMap.Set("SEMICOLON", `;`)
+	orderedMap.Set("PERIOD", `\.`)
+
+	//compiledPattern := orderedmap.NewOrderedMap[string, *regexp.Regexp]()
+
+	yuh := orderedmap.NewOrderedMap[int, int]()
+	yuh.Set(7, 2)
+	yuh.Set(3, 4)
+	yuh.Set(5, 6)
+	yuh.Set(1, 8)
+
 	/*
-		you have 2 structs, tokenType string --> used more for printing so then youcan njsut say the var and it will print
-		token regex, --> searches for pattern
-
-
-		through file , if pattern is in tokenrege, print out tokentype,
-							if token = id or num, needs to be saved
+		re := regexp.MustCompile(`^[a-z]+[a-z0-9]*`)
+			id := re.FindString(line)
+			if id == "test" {
+				fmt.Println("TEST")
+			} else {
+				fmt.Println("ID", id)
+			}
 	*/
 
-	// compiles entire map of pattern off the bat
-	compiledPattern := make(map[tokenType]*regexp.Regexp)
-	for key, pattern := range tokenRegex {
-		compiledPattern[key] = regexp.MustCompile(pattern)		
-	}
+	for len(trimmedFile) > 0 {
+		for element := orderedMap.Front(); element != nil; element = element.Next() {
+			matched, _ := regexp.MatchString(element.Value, trimmedFile)
+			re := regexp.MustCompile(element.Value)
+			found := re.FindString(trimmedFile)
+			if matched {
+				fmt.Println(element.Key)
+				fmt.Printf("%q\n", re.FindString(trimmedFile))
+				trimmedFile = strings.Replace(trimmedFile, found, "", 1)
+				//break
+			}
 
-	matches := compiledPattern.FindAllString(line, -1)
-	if len(matches) > 0 {
-		fmt.Println(matches)
-	}
-
-	
-	
-
-/*
-	for key, reg := range compiledPattern {
-		if reg.MatchString(line) {
-			fmt.Println(key)
+			//compiledPattern.Set(element.Key, regexp.MustCompile(element.Value))
 		}
 	}
-*/
-	
 
+	// for item := compiledPattern.Front(); item != nil; item = item.Next() {
+	// 	matched, _ := regexp.MatchString(item.Value, line)
+	// }
 
+	/*
+		re := regexp.MustCompile(`^[a-z]+[a-z0-9]*`)
+		id := re.FindString(line)
+		if id == "test" {
+			fmt.Println("TEST")
+		} else {
+			fmt.Println("ID", id)
+		}
 
+		// Tokenizes =
+		if strings.Contains(line, "=") {
+			fmt.Println("ASSIGN")
+		}
 
+		// Tokenizes ,
+		if strings.Contains(line, "point") {
+			fmt.Println("POINT")
+		}
+
+		// Tokenizes (
+		if strings.Contains(line, "(") {
+			fmt.Println("LPAREN")
+		}
+
+		// Tokenizes x value
+		x := regexp.MustCompile(`(\d+)`)
+		xVal := x.FindString(line)
+		if _, err := strconv.Atoi(xVal); err == nil {
+			fmt.Println("NUM ", xVal)
+
+			if strings.Contains(line, ",") {
+				fmt.Println("COMMA")
+			}
+		}
+
+		// Tokenizes y value
+		// y := regexp.MustCompile(`\,(.*?)\)`)
+		// ySeen := y.FindStringSubmatch(line)
+		// if len(ySeen) > 1 {
+		// 	fmt.Println("NUM", ySeen[1])
+		// }
+
+		y := regexp.MustCompile(`(,\s*\d+)`)
+		yComma := y.FindString(line)
+		y2 := regexp.MustCompile(`\d+`)
+		yVal := y2.FindString(yComma)
+		if _, err := strconv.Atoi(yVal); err == nil {
+			fmt.Println("NUM ", yVal)
+		}
+
+		// Tokenizes triangle
+		if strings.Contains(line, "triangle") {
+			fmt.Println("TRIANGLE")
+		}
+
+		/**
+		tri := regexp.MustCompile(`,\s*[a-z0-9]+`)
+		tri1Comma := tri.FindString(line)
+		tri1 := regexp.MustCompile(`[a-z0-9]+`)
+		tri1Val := tri1.FindString(tri1Comma)
+		if id == "test" {
+			ID:
+		}
+		**/
+	/*
+			triangle, find biggerm if triangle, then print, nad repeat
+			t is the id, an will print out as id, but will save as t1, t2, t3 = ids and then the ids have values assigne to it
+			do matchString to get a list of it values after comma, then preset each to null, so its jsut re-assigned in statement, then can be used outside of function
+			//
+
+		// tri := regexp.MustCompile(`(,\s*\d+)`)
+		// triVars := tri.FindAllStringSubmatch(line, -1)
+
+		// tri1 := os.DevNull
+		// tri2 := os.DevNull
+		// tri3 := os.DevNull
+
+		// if len(triVars) > 0
+
+		// 	tri1 = match[1]
+		// 	fmt.Println("ID", tri1)
+		// 	tri2 = match[2]
+		// 	fmt.Print
+
+		// Tokenizes square
+		if strings.Contains(line, "square") {
+			fmt.Println("SQUARE")
+		}
+
+		// Tokenizes ,
+		if strings.Contains(line, ",") {
+			fmt.Println("COMMA")
+		}
+
+		// Tokenizes )
+		if strings.Contains(line, ")") {
+			fmt.Println("RPAREN")
+		}
+
+		// Tokenizes ;
+		if strings.Contains(line, ";") {
+			fmt.Println("SEMICOLON")
+		}
+
+		// Tokenizes .
+		if strings.Contains(line, ".") {
+			fmt.Println("PERIOD")
+		}
+
+	*/
 }
