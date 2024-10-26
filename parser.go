@@ -8,10 +8,6 @@ import (
 	"unicode"
 )
 
-// "bufio"
-// "os"
-// "strings"
-
 type grammar struct {
 	token  string
 	lexeme string
@@ -35,12 +31,14 @@ var tokenPatterns2 = map[string]string{
 	"TEST":     `^test\b`,
 }
 
-func newToken(token string) *grammar {
+var collectedTokens []grammar
 
-	g := grammar{token: token}
-	g.lexeme = ""
-	return &g
-}
+// func newToken(token string) *grammar {
+
+// 	g := grammar{token: token}
+// 	g.lexeme = ""
+// 	return &g
+// }
 
 func main() {
 
@@ -57,6 +55,8 @@ func main() {
 	// removes whitespace, new line, and tabs from the file then
 	// sends the clean string file the tokenizer
 	tokenizer(removeWhiteSpace(fileString))
+
+	fmt.Println(collectedTokens)
 }
 
 func removeWhiteSpace(entireFile string) string {
@@ -68,7 +68,7 @@ func removeWhiteSpace(entireFile string) string {
 	return noWhiteSpace
 }
 
-func tokenizer(entireFile string) {
+func tokenizer(entireFile string) { // does not yet reject cap letters
 
 	//  holds the temp string to tokenize
 	var temp strings.Builder
@@ -119,11 +119,26 @@ func tokenizer(entireFile string) {
 	//process period/last token
 }
 
+/*
+func newToken(token string) *grammar {
+
+	g := grammar{token: token}
+	g.lexeme = ""
+	return &g
+}
+
+type grammar struct {
+	token  string
+	lexeme string
+}
+*/
+
 func processToken(passedToken string, compiledPatterns map[string]*regexp.Regexp, compiledPatterns2 map[string]*regexp.Regexp) {
 
 	for key, regex := range compiledPatterns2 {
 		if regex.MatchString(passedToken) {
 			fmt.Println(key + " " + passedToken)
+			collectedTokens = append(collectedTokens, grammar{token: key, lexeme: passedToken})
 			return
 		}
 		// else panic(err)
@@ -132,6 +147,12 @@ func processToken(passedToken string, compiledPatterns map[string]*regexp.Regexp
 	for key, regex := range compiledPatterns {
 		if regex.MatchString(passedToken) {
 			fmt.Println(key + " " + passedToken)
+
+			if key == "ID" || key == "NUM" {
+				collectedTokens = append(collectedTokens, grammar{token: key, lexeme: passedToken})
+			} else {
+				collectedTokens = append(collectedTokens, grammar{token: key})
+			}
 
 		}
 		// else panic(err)
