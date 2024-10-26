@@ -42,6 +42,91 @@ var collectedTokens []grammar
 
 func main() {
 
+	/*
+
+				prompt>go run . input.txt -s
+				; Processing Input File input.txt
+				; Lexical and Syntax analysis passed
+				; Generating Scheme Code
+				(process-triangle (make-point 2 3) (make-point 1 4) (make-point 3 4))
+				prompt>
+
+
+
+		func compiledRegex2() map[string]*regexp.Regexp {
+			compiledPatterns2 := make(map[string]*regexp.Regexp)
+			for key, pattern := range tokenPatterns2 {
+				compiledPatterns2[key] = regexp.MustCompile(pattern)
+			}
+
+			return compiledPatterns2
+		}
+
+		if regex.MatchString(passedToken) {
+					fmt.Println(key + " " + passedToken)
+					collectedTokens
+
+	*/
+
+	var i, j string
+
+	fmt.Print("prompt>go run .")
+	fmt.Scan(&i, &j)
+
+	filepattern := regexp.MustCompile(`/^[a-z0-9]+\.[a-z]+$\b/gm`)
+
+	if i == "" {
+		errorMessage := `Missing parameter, file:
+		go run . filename - flag
+		flag can be p for prolog generation
+		flag can be s for prolog generation`
+
+		fmt.Printf("%s\n", errorMessage)
+		return
+	} else if j == "" {
+		errorMessage := `Missing parameter, usage:
+		go run . filename - flag
+		flag can be p for prolog generation
+		flag can be s for prolog generation`
+
+		fmt.Printf("%s\n", errorMessage)
+		return
+	} else if !filepattern.MatchString(i) || (strings.ToLower(j) != "-s" || strings.ToLower(j) != "-p") {
+		errorMessage := `Incorrect syntax for filename and flag:
+		go run . filename - flag
+		flag can be p for prolog generation
+		flag can be s for prolog generation`
+
+		fmt.Printf("%s\n", errorMessage)
+		return
+	}
+
+	if strings.ToLower(j) == "-s" {
+		//checking for fails in code
+
+		// assume should be good by now
+
+		scheme()
+	} else {
+		// its accepted by p
+		print("hello")
+	}
+
+	// i should be a file name, j needs to be -s or -p
+
+	// need to write if input wrong, to give t
+
+	// check, if not fail
+
+	// need to move this to after an actual things, aka where we check for lexical and synteax error
+	inputSuccess := `; Processing Input File input.txt
+		; Lexical and Syntax analysis passed
+		; Generating Scheme Code
+		(process-triangle (make-point 2 3) (make-point 1 4) (make-point 3 4))
+		prompt>`
+
+	fmt.Printf("%s\n", inputSuccess)
+
 	// opens and reads file
 	file, err := os.ReadFile("test1.cpl")
 	if err != nil {
@@ -158,6 +243,16 @@ func processToken(passedToken string, compiledPatterns map[string]*regexp.Regexp
 		// else panic(err)
 	}
 
+}
+
+func scheme() {
+	output := `; Processing Input File input.txt
+	; Lexical and Syntax analysis passed
+	; Generating Scheme Code`
+
+	fmt.Println("(process-")
+
+	fmt.Printf("%s\n", output)
 }
 
 func compiledRegex() map[string]*regexp.Regexp {
