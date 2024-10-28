@@ -5,3 +5,4 @@ d = point ( 2 , 1 ) ;
 test ( triangle , a , b , c ) ;
 test ( square , a, b , c , d ) .
 
+
