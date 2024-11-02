@@ -93,40 +93,40 @@ Combines all the methods of the program to correctly function
 
 func main() {
 
-	var i, j string
-
-	fmt.Print("prompt> go run . ")
-	fmt.Scan(&i, &j)
-
 	filepattern := regexp.MustCompile(`^[a-z0-9]+\.[a-z]+$`)
-
-	if i == "" {
-		errorMessage := `Missing parameter, file:
-go run . filename - flag
-flag can be p for Prolog generation
-flag can be s for Scheme generation`
-		fmt.Printf("%s\n", errorMessage)
-		return
-	} else if j == "" {
+	if len(os.Args) < 3 {
 		errorMessage := `Missing parameter, usage:
 go run . filename - flag
 flag can be p for Prolog generation
 flag can be s for Scheme generation`
-		fmt.Printf("%s\n", errorMessage)
-		return
-	} else if !filepattern.MatchString(i) || (strings.ToLower(j) != "-s" && strings.ToLower(j) != "-p") {
+		panic(errorMessage)
+
+	} else if os.Args[1] == "" {
+		errorMessage := `Missing parameter, file:
+go run . filename - flag
+flag can be p for Prolog generation
+flag can be s for Scheme generation`
+		panic(errorMessage)
+
+	} else if os.Args[2] == "" {
+		errorMessage := `Missing parameter, usage:
+go run . filename - flag
+flag can be p for Prolog generation
+flag can be s for Scheme generation`
+		panic(errorMessage)
+
+	} else if !filepattern.MatchString(os.Args[1]) || (strings.ToLower(os.Args[2]) != "-s" && strings.ToLower(os.Args[2]) != "-p") {
 		errorMessage := `Incorrect syntax for filename and flag:
 go run . filename - flag
 flag can be p for Prolog generation
 flag can be s for Scheme generation`
-		fmt.Printf("%s\n", errorMessage)
-		return
+		panic(errorMessage)
+
 	}
 
-	fileData, err := os.ReadFile(i)
+	fileData, err := os.ReadFile(os.Args[1])
 	if err != nil {
-		fmt.Println("Error reading file:", err)
-		return
+		panic("Cannot read file")
 	}
 
 	fileString := string(fileData)
@@ -136,9 +136,9 @@ flag can be s for Scheme generation`
 	checkSyntax()
 	organizeVariables()
 
-	if strings.ToLower(j) == "-s" {
+	if strings.ToLower(os.Args[2]) == "-s" {
 		scheme()
-	} else if strings.ToLower(j) == "-p" {
+	} else if strings.ToLower(os.Args[2]) == "-p" {
 		prolog()
 	}
 }
@@ -216,8 +216,7 @@ func processToken(passedToken string, compiledPatterns map[string]*regexp.Regexp
 		}
 	}
 
-	fmt.Println("Lexicode error " + passedToken + " not recognized")
-	os.Exit(0)
+	panic("Lexicode error " + passedToken + " not recognized")
 }
 
 /*
@@ -263,18 +262,15 @@ func matchSyntax(pattern []string, index int) int {
 		if collectedTokens[index+i].token == pattern[i] {
 			continue
 		} else {
-			fmt.Println("Syntax error " + collectedTokens[index+i].lexeme + " found " + pattern[i] + " expected")
-			os.Exit(0)
+			panic("Syntax error " + collectedTokens[index+i].lexeme + " found " + pattern[i] + " expected")
 		}
 	}
 
 	if collectedTokens[i+index+1].token == "SEMICOLON" && i+index+1 == len(collectedTokens)-1 {
-		fmt.Println("Syntax error ; found . expected")
-		os.Exit(0)
+		panic("Syntax error ; found . expected")
 	}
 	if collectedTokens[i+index+1].token == "PERIOD" && i+index+1 != len(collectedTokens)-1 {
-		fmt.Println("Syntax error . found ; expected")
-		os.Exit(0)
+		panic("Syntax error . found ; expected")
 	}
 
 	return i + index + 1
@@ -307,7 +303,6 @@ func organizeVariables() {
 			xVal = ""
 			yVal = ""
 		}
-
 	}
 }
 
@@ -327,13 +322,14 @@ func scheme() {
 		if collectedTokens[i].token == "TRIANGLE" || collectedTokens[i].token == "SQUARE" {
 			shapeSeen = true
 			output += "\n(process-" + collectedTokens[i].lexeme
+		} else if collectedTokens[i].token == "SEMICOLON" {
+			shapeSeen = false
 		} else if collectedTokens[i].token == "ID" && shapeSeen == true {
 			pointData, exists := dataPoints[collectedTokens[i].lexeme]
 			if exists {
 				output += " (make-point " + pointData.x + " " + pointData.y + ")"
 			} else {
-				fmt.Println("Attempted to use a data point that does not exist")
-				os.Exit(0)
+				panic("Attempted to use a data point that does not exist")
 			}
 		} else if collectedTokens[i].token == "TEST" {
 			output += ")"
@@ -354,7 +350,9 @@ Runs the prolog output
 func prolog() {
 	shapeSeen := false
 
-	output := "\n/* processing input file input.txt \n   Lexical and Syntax analysis passed \n   Generating Prolog Code */\n"
+	fmt.Println("\n/* processing input file input.txt \n   Lexical and Syntax analysis passed \n   Generating Prolog Code */")
+
+	output := ""
 	squareOutput := ""
 
 	for i := 0; i < len(collectedTokens); i++ {
@@ -372,8 +370,7 @@ func prolog() {
 				squareOutput += "point2d(" + pointData.x + ", " + pointData.y + "),"
 
 			} else {
-				fmt.Println("Attempted to use a data point that does not exist")
-				os.Exit(0)
+				panic("Attempted to use a data point that does not exist")
 			}
 		} else if collectedTokens[i].token == "TEST" || collectedTokens[i].token == "PERIOD" {
 			if shapeSeen {
@@ -388,7 +385,7 @@ func prolog() {
 			shapeSeen = false
 
 			fmt.Printf("%s\n", output)
-			fmt.Printf("%s\n", squareOutput)
+			fmt.Printf("%s", squareOutput)
 
 			lines := strings.Split(squareOutput, "\n")
 
@@ -408,10 +405,13 @@ func prolog() {
 					squareOutput = temp
 				}
 			}
+
+			output = ""
+			squareOutput = ""
 		}
 	}
 
-	fmt.Println("\n/* Query Processing */\nwriteln(T) :- write(T), nl.\nmain:- forall(query(Q), Q-> (writeln(‘yes’)) ; (writeln(‘no’))),\n\thalt.")
+	fmt.Println("\n\n/* Query Processing */\nwriteln(T) :- write(T), nl.\nmain:- forall(query(Q), Q-> (writeln(‘yes’)) ; (writeln(‘no’))),\n\thalt.")
 }
 
 /*
