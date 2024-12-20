@@ -1,5 +1,4 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Pd_cHIvM)
-# Go Programming Assignment: 4Point Grammar Lexical and Syntax Analysis
+# Go Programming: 4Point Grammar Lexical and Syntax Analysis
 
 
 ## Motivation
@@ -11,7 +10,7 @@ This project consists in the development of the front end of a compiler. By prog
 
 
 ## Description
-Write a program in Go that takes a program written in 4Point, and outputs:
+A program in Go that takes a program written in 4Point, and outputs:
 1. If the code has lexical or syntax errors, the error that was found. Use panic version of error handling (once an error is found report the error and stop the process).
 1. If the code is OK, depending on a command line flag the program will produce:
    1.	If the flag is `-s` the program will output function calls in Scheme that is going to be called by a program in Scheme that will calculate properties of those four points.
@@ -35,8 +34,6 @@ go run . filename -flag
 flag can be p for prolog generation
 flag can be s for scheme generation
 ```
-
-Your program should **never** crash.
 
 ## Grammar
 
@@ -162,6 +159,8 @@ The purpose of this assignment is _not_ to just output the list of tokens of a g
 
 ## How to run the program
 
+`go run input.txt`
+
 The following examples assume that `input.txt` contains the following code:
 ```
 a = point(2, 3);
@@ -173,7 +172,7 @@ test(triangle, a, b, c).
 ```
 
 ### Scheme Output
-To generate scheme output you will add the `-s` flag at the end of the command:
+The following Scheme output will be generated when you add the `-s` flag at the end of the command:
 ```
 prompt> go run . input.txt -s
 ; processing input file input.txt
@@ -212,72 +211,7 @@ prompt> go run .  input.txt -p
        halt.
 
 ```
-### Some code with errors
 
-The following example assumes that `another.txt` contains the following code:
-```
-one=pont(1,1);
-two=point(2,2);
-three=point(3,3).
-```
-Independently of the flag (`-p` or `-s`).
-```
-prompt> go run . another.txt -p
-Syntax error pont found point expected
-```
-
-The following example assumes that `thelast.txt` contains the following code:
-```
-misa=point[1,2];
-jarjar=point(0,0);
-binks=point(@,@).
-```
-Independently of the flag (`-p` or `-s`).
-```
-prompt> go run . thelast.txt -p
-Lexical error [ not recognized
-```
-
-Later we will redirect the output to Scheme and Prolog programs respectively.
-
-## Assignment Requirements
-- Good programming practices
-  - Indentation
-  - Meaningful identifier naming
-  - Consistent variable naming convention
-- This activity is **strictly** individual
-- Program does not crash or generates any warnings or errors.
-
-## Delivery
-You will use this repository and commit and push to it. Remember to push your last version before the deadline.
-What files should be in your repository:
-- `parser.go` Source code in Go for your lexical and syntax analysis
-- `go.mod` Modules file
-- `test0.cpl`, `test1.cpl`, `test2.cpl`, `test3.cpl`, `test4.cpl`, `test5.cpl`, `test6.cpl`,the test files provided for you to test. Notice that `test3.cpl`  and `test4.cpl` have some issues, additionally `test5.cpl` has a lexical error and `test6.cpl` has a syntax error.
-
-## Assessment and Grading
-Assessment will consider the following factors in the grading of this assignment:
--	Good programming practices
--	Your program will be tested with the test programs that were provided and some others that will be made to test, some with lexical errors, some with syntax errors, some without any errors.
--	Adherence to instructions
--	Correct function of the program
--	No runtime errors
--	Late deliveries will have a zero mark
--	Plagiarism will have a double zero mark (in addition to losing 10% of your final grade, the person that plagiarizes will lose an additional 10% of their final grade), besides there will be a report filed in the students’ academic record.
-
-## Extra Challenge
-
-Create an additional file with a decorated (Tokens with Lexemes on the Leaves) parse tree. The file should be named like the input file but with the extension `.pt` (stands for parse tree), for instance if the input file is `test1.cpl` the parse tree should be in file `test1.pt`.
-
-## Academic Integrity
-This programming assignment is to be done on an **individual** basis. At the same time, it is understood that learning from your peers is valid and you are encouraged to talk among yourselves about programming in general and current assignments in particular.  Keep in mind, however, that each individual student must do the work in order to learn.  Hence, the following guidelines are established:
-- Feel free to discuss any and all programming assignments but do not allow other students to look at or copy your code. Do not give any student an electronic or printed copy of any program you write for this class.
-- Gaining the ability to properly analyze common programming errors is an important experience. Do not deprive a fellow student of his/her opportunity to practice problem solving: control the urge to show them what to do by writing the code for them.
-- If you’ve given the assignment a fair effort and still need help, see the instructor or a lab assistant.
-- **If there is any evidence that a program or other written assignment was copied from another student, neither student will receive any credit for it. This rule will be enforced.**
-- Protect yourself: Handle throw-away program listings carefully, keep your repository private.
-
-Refer to the ECS Department Policy on Academic Integrity that is included in the class syllabus.
 
 
 ## Revisions
