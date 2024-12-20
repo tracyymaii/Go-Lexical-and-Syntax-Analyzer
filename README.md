@@ -149,15 +149,8 @@ PERIOD
 Notice that the ID and NUM tokens have their lexeme associated. Also notice that in the language the elements do not need to be separated by space.
 
 ---
-**NOTE**
 
-
-The purpose of this assignment is _not_ to just output the list of tokens of a given programs. One of the steps of your program can be to produce this list, but the actual goal is to do the following phase of syntax analysis and producing the code on Scheme or Prolog. Furthermore, remember to remove that temporary outout, your program will be graded by a script, and the list of tokens is *not* part of the expected output.
-
----
-
-
-## How to run the program
+### How to run the program
 
 `go run input.txt`
 
