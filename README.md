@@ -146,7 +146,8 @@ RPAREN
 PERIOD
 ```
 
-Notice that the ID and NUM tokens have their lexeme associated. Also notice that in the language the elements do not need to be separated by space.
+Notice that the ID and NUM tokens have their lexeme associated. Also notice that in the language the elements do not need to be separated by space. 
+The tokens are generated within the program, and will not be shown as an output. This is to demonstrate what is happening in the backend.
 
 ---
 
@@ -206,10 +207,3 @@ prompt> go run .  input.txt -p
 ```
 
 
-
-## Revisions
-1.0
-- [x] Say that they need to send the flag, or produce error when no flag or wrong flag is given
-- [x] One of the correct tests is missing a semicolon, fix it
-
-2.0
